@@ -1,0 +1,4 @@
+interface:
+  display_name: "StudyBrain Course Overview"
+  short_description: "Resume evidencia real sin estimar dominio"
+  default_prompt: "Genera un informe general del ramo usando solo evaluaciones corregidas con ítems, puntajes y contenidos vinculados; separa los contenidos sin evidencia y no estimes dominio."

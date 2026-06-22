@@ -1,0 +1,4 @@
+interface:
+  display_name: "StudyBrain Evaluation Analysis"
+  short_description: "Analiza e importa pruebas corregidas de punta a punta"
+  default_prompt: "Analiza esta prueba corregida y prepara su importación completa a StudyBrain; detecta su estructura real, consulta el temario, muestra la propuesta y espera mi confirmación antes de subirla."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "StudyBrain Weekly Planning"
+  short_description: "Genera un plan JSON semanal y sus exportaciones"
+  default_prompt: "Planifica la semana desde mi contexto JSON estructurado, valida el plan canónico y deriva plan_semanal_general.md y eventos_exportables.csv."

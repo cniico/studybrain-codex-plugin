@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/cniico/studybrain-codex-plugin/blob/main/skills/weekly-planning/context.schema.json",
+  "title": "StudyBrain weekly planning context",
+  "description": "Contrato canónico de entrada. version, semester y week bloquean la planificación si faltan o son inválidos. Los demás campos son opcionales: su ausencia debe registrarse como advertencia y reduce la precisión. La ausencia de availability produce un plan válido sin eventos.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "semester", "week"],
+  "properties": {
+    "version": { "const": "1.0" },
+    "generatedAt": { "type": "string", "format": "date-time", "description": "Instante de generación del contexto cuando proviene de la API privada." },
+    "semester": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "institution": { "type": ["string", "null"], "maxLength": 300 },
+        "program": { "type": ["string", "null"], "maxLength": 300 },
+        "startsAt": { "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] },
+        "endsAt": { "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] }
+      }
+    },
+    "week": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end", "timezone"],
+      "properties": {
+        "start": { "$ref": "#/$defs/date" },
+        "end": { "$ref": "#/$defs/date" },
+        "timezone": { "type": "string", "minLength": 1, "maxLength": 100, "description": "Zona horaria IANA entregada por el contexto." },
+        "weekStartsOn": {
+          "type": "string",
+          "enum": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
+          "default": "monday",
+          "description": "Preferencia de inicio de semana. monday es solo el valor predeterminado documentado; start y end siguen siendo la fuente de verdad."
+        }
+      }
+    },
+    "courses": {
+      "type": "array",
+      "default": [],
+      "items": { "$ref": "#/$defs/course" }
+    },
+    "evaluations": {
+      "type": "array",
+      "default": [],
+      "items": { "$ref": "#/$defs/evaluation" }
+    },
+    "syllabusTopics": {
+      "type": "array",
+      "default": [],
+      "items": { "$ref": "#/$defs/courseTopic" }
+    },
+    "mastery": {
+      "type": "array",
+      "default": [],
+      "items": { "$ref": "#/$defs/courseSignal" }
+    },
+    "errors": {
+      "type": "array",
+      "default": [],
+      "items": { "$ref": "#/$defs/courseSignal" }
+    },
+    "recommendations": {
+      "type": "array",
+      "default": [],
+      "items": { "$ref": "#/$defs/courseSignal" }
+    },
+    "availability": {
+      "type": "array",
+      "default": [],
+      "description": "Ventanas confirmadas. Si está ausente o vacío, no se programan eventos.",
+      "items": { "$ref": "#/$defs/timeBlock" }
+    },
+    "busyBlocks": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "allOf": [
+          { "$ref": "#/$defs/timeBlock" },
+          {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string", "minLength": 1, "maxLength": 300 },
+              "source": { "type": "string", "minLength": 1, "maxLength": 80 }
+            }
+          }
+        ]
+      }
+    },
+    "studyPreferences": {
+      "type": "object",
+      "default": {},
+      "additionalProperties": true,
+      "properties": {
+        "maxBlockMinutes": { "type": "integer", "minimum": 1, "maximum": 1440 },
+        "minBlockMinutes": { "type": "integer", "minimum": 1, "maximum": 1440 }
+      }
+    },
+    "previousPlans": {
+      "type": "array",
+      "default": [],
+      "items": { "type": "object" }
+    },
+    "weeklyGoal": {
+      "type": ["string", "null"],
+      "default": null,
+      "maxLength": 1000
+    },
+    "missingContext": {
+      "type": "array",
+      "default": [],
+      "description": "Datos ausentes o truncados que el agente debe comunicar o solicitar, nunca completar mediante inferencias.",
+      "items": { "type": "string", "minLength": 1, "maxLength": 1000 }
+    }
+  },
+  "$defs": {
+    "date": { "type": "string", "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "time": { "type": "string", "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$" },
+    "courseSlug": { "type": "string", "minLength": 1, "maxLength": 120, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "course": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["courseSlug", "courseName"],
+      "properties": {
+        "courseSlug": { "$ref": "#/$defs/courseSlug" },
+        "courseName": { "type": "string", "minLength": 1, "maxLength": 200 }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "courseSlug", "title", "date"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "courseSlug": { "$ref": "#/$defs/courseSlug" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "date": { "$ref": "#/$defs/date" },
+        "courseName": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "startTime": { "anyOf": [{ "$ref": "#/$defs/time" }, { "type": "null" }] },
+        "endTime": { "anyOf": [{ "$ref": "#/$defs/time" }, { "type": "null" }] },
+        "weight": { "type": ["number", "null"] },
+        "status": { "type": "string", "enum": ["scheduled", "historical", "completed", "unknown"] },
+        "dateSource": { "type": "string", "enum": ["confirmed", "unknown"] },
+        "syllabusReference": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["evaluationKey", "evaluationTitle"],
+          "properties": {
+            "evaluationKey": { "type": "string", "minLength": 1, "maxLength": 200 },
+            "evaluationTitle": { "type": "string", "minLength": 1, "maxLength": 300 }
+          }
+        },
+        "importance": { "type": ["number", "string"] },
+        "difficulty": { "type": ["number", "string"] },
+        "risk": { "type": ["number", "string"] }
+      }
+    },
+    "courseTopic": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["courseSlug"],
+      "anyOf": [
+        { "required": ["topic"] },
+        { "required": ["title"] }
+      ],
+      "properties": {
+        "courseSlug": { "$ref": "#/$defs/courseSlug" },
+        "topic": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "id": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "evaluationKey": { "type": "string", "maxLength": 200 },
+        "evaluationTitle": { "type": "string", "maxLength": 300 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "unit": { "type": "string", "maxLength": 300 },
+        "keywords": { "type": "array", "items": { "type": "string", "maxLength": 100 } }
+      }
+    },
+    "courseSignal": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["courseSlug"],
+      "properties": {
+        "courseSlug": { "$ref": "#/$defs/courseSlug" },
+        "topic": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 2000 }
+      }
+    },
+    "timeBlock": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["date", "startTime", "endTime"],
+      "properties": {
+        "date": { "$ref": "#/$defs/date" },
+        "startTime": { "$ref": "#/$defs/time" },
+        "endTime": { "$ref": "#/$defs/time" }
+      }
+    }
+  }
+}

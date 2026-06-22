@@ -1,0 +1,18 @@
+{
+  "name": "studybrain-codex-plugin",
+  "version": "1.0.0",
+  "description": "Skills de Codex para analizar evaluaciones, resumir evidencia académica y planificar semanas en StudyBrain.",
+  "author": {
+    "name": "StudyBrain"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "StudyBrain Codex Plugin",
+    "shortDescription": "Analiza evaluaciones, evidencia y planes semanales.",
+    "longDescription": "Agrupa skills que analizan e importan automáticamente evaluaciones corregidas, generan informes generales sin estimar dominio y crean planes semanales desde contratos JSON explícitos para StudyBrain.",
+    "developerName": "StudyBrain",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "Ayúdame a analizar evidencia académica o generar una planificación semanal segura para StudyBrain."
+  }
+}
