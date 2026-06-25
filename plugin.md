@@ -7,6 +7,7 @@ Reunir skills de Codex que analicen materiales académicos y, con autorización 
 ## Skills disponibles
 
 - `evaluation-analysis`: analiza evaluaciones corregidas, propone preguntas, puntajes, contenidos y errores, y solo importa tras confirmación.
+- `grade-import`: extrae notas desde capturas, PDFs, informes o texto, cruza contra items autorizados y solo registra filas confirmadas.
 - `mastery-analysis`: genera un informe general del ramo usando exclusivamente evidencia real; no estima ni modifica el dominio guardado.
 - `weekly-planning`: crea un plan semanal desde contexto académico autorizado y solo lo envía tras confirmación.
 
@@ -22,6 +23,8 @@ Reunir skills de Codex que analicen materiales académicos y, con autorización 
 ## Endpoints usados
 
 - `POST /api/studybrain/import`
+- `GET /api/studybrain/grades/context`
+- `POST /api/studybrain/grades/import`
 - `GET /api/studybrain/planning/context`
 - `POST /api/studybrain/planning/import`
 
